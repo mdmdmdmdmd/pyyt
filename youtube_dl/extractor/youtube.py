@@ -10,10 +10,10 @@ import re
 import time
 import traceback
 
-from .common import InfoExtractor, SearchInfoExtractor
-from jsinterp import JSInterpreter
-from swfinterp import SWFInterpreter
-from compat import (
+from youtube_dl.extractor.common import InfoExtractor, SearchInfoExtractor
+from youtube_dl.jsinterp import JSInterpreter
+from youtube_dl.swfinterp import SWFInterpreter
+from youtube_dl.compat import (
     compat_chr,
     compat_parse_qs,
     compat_urllib_parse,
@@ -21,7 +21,7 @@ from compat import (
     compat_urlparse,
     compat_str,
 )
-from utils import (
+from youtube_dl.utils import (
     clean_html,
     ExtractorError,
     float_or_none,

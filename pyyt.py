@@ -2,7 +2,7 @@ import http.server
 import subprocess
 import os
 
-from extractor import youtube
+from youtube_dl.extractor import youtube
 from config import cfgoptions
 
 

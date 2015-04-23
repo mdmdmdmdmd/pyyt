@@ -12,7 +12,7 @@ import sys
 import time
 import xml.etree.ElementTree
 
-from compat import (
+from youtube_dl.compat import (
     compat_cookiejar,
     compat_HTTPError,
     compat_http_client,
@@ -22,7 +22,7 @@ from compat import (
     compat_urllib_request,
     compat_str,
 )
-from utils import (
+from youtube_dl.utils import (
     age_restricted,
     bug_reports_message,
     clean_html,
@@ -725,7 +725,7 @@ class InfoExtractor(object):
 
         def _formats_key(f):
             # TODO remove the following workaround
-            from utils import determine_ext
+            from youtube_dl.utils import determine_ext
             if not f.get('ext') and 'url' in f:
                 f['ext'] = determine_ext(f['url'])
 

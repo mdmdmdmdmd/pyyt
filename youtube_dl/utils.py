@@ -32,7 +32,7 @@ import traceback
 import xml.etree.ElementTree
 import zlib
 
-from compat import (
+from youtube_dl.compat import (
     compat_basestring,
     compat_chr,
     compat_html_entities,

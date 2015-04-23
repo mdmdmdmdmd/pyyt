@@ -4,7 +4,7 @@ import json
 import operator
 import re
 
-from utils import (
+from youtube_dl.utils import (
     ExtractorError,
 )
 

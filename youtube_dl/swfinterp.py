@@ -4,8 +4,8 @@ import collections
 import io
 import zlib
 
-from compat import compat_str
-from utils import (
+from youtube_dl.compat import compat_str
+from youtube_dl.utils import (
     ExtractorError,
     struct_unpack,
 )
