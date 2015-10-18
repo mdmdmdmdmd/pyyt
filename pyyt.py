@@ -13,6 +13,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
         if result:
             vlist = []
             alist = []
+            #print(result['formats'])
             for entry in result['formats']:
                 if 'acodec' in entry:
                     if entry['acodec'] == 'none':
@@ -38,11 +39,11 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
         baseurl = 'https://www.youtube.com/watch?v='
         url = baseurl + vid
         avurls = self._getav(url)
+        #print(avurls)
         if not avurls:
             return
         cmd = [cfgoptions.vlc, '--quiet', '--sout-mux-caching=9000', avurls[0], '--input-slave=' + avurls[1]]
         cmd.append('-I dummy')
-        cmd.append('--dummy-quiet')
         cmd.append('--sout')
         cmd.append(cfgoptions.preset_remux)
         cmd.append('vlc://quit')
@@ -76,8 +77,11 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
 
 
 def main():
+    if not os.path.isfile(cfgoptions.vlc):
+        print('vlc not found.')
+        return
     try:
-        server = http.server.HTTPServer((cfgoptions.host, cfgoptions.port), MyHandler)
+        server = http.server.HTTPServer((cfgoptions.host, cfgoptions.port), MyHandler)  # TODO: add multi threading
         print('Started http server')
         server.serve_forever()
     except KeyboardInterrupt:
