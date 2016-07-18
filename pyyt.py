@@ -3,17 +3,46 @@ import subprocess
 import os
 
 from youtube_dl.extractor import youtube
+from youtube_dl.utils import sanitized_Request
+from youtube_dl.compat import (
+    compat_basestring,
+    compat_urllib_request
+)
+from youtube_dl.cache import Cache
 from config import cfgoptions
 
+class Downloader(object):
+    params = None
+    _opener = None
+    _socket_timeout = None
+
+    def __init__(self):
+        self.params = {'prefer_insecure': False}
+        self.cache = Cache(self)
+
+    def to_screen(self, string, skip_eol=False):
+        print(string)
+
+    def report_warning(self, message):
+        print(message)
+
+    def urlopen(self, req):
+        self._socket_timeout = 600
+        if isinstance(req, compat_basestring):
+            req = sanitized_Request(req)
+        opener = compat_urllib_request.build_opener()
+        self._opener = opener
+        return self._opener.open(req, timeout=self._socket_timeout)
 
 class MyHandler(http.server.BaseHTTPRequestHandler):
     def _getav(self, url):
         yie = youtube.YoutubeIE()
+        downloader = Downloader()
+        yie.set_downloader(downloader)
         result = yie._real_extract(url)
         if result:
             vlist = []
             alist = []
-            #print(result['formats'])
             for entry in result['formats']:
                 if 'acodec' in entry:
                     if entry['acodec'] == 'none':
@@ -24,7 +53,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
                     else:
                         if 'abr' in entry:
                             if entry['abr'] is not None:
-                                if entry['acodec'] == 'aac':
+                                if entry['ext'] == 'm4a':
                                     alist.append(entry)
             if len(vlist) > 0 and len(alist) > 0:
                 vlist.sort(key=lambda t: t['height'])
@@ -39,11 +68,11 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
         baseurl = 'https://www.youtube.com/watch?v='
         url = baseurl + vid
         avurls = self._getav(url)
-        #print(avurls)
         if not avurls:
             return
         cmd = [cfgoptions.vlc, '--quiet', '--sout-mux-caching=9000', avurls[0], '--input-slave=' + avurls[1]]
         cmd.append('-I dummy')
+        # cmd.append('--dummy-quiet')
         cmd.append('--sout')
         cmd.append(cfgoptions.preset_remux)
         cmd.append('vlc://quit')
